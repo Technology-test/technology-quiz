@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>情報の知識 一問一答クイズ (王道応援版)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // CSS変数のRGB値をTailwindクラスにバインドするヘルパー
+    function rgb(variable) {
+      return ({ opacityValue }) => {
+        if (opacityValue !== undefined) {
+          return `rgb(var(${variable}) / ${opacityValue})`;
+        }
+        return `rgb(var(${variable}))`;
+      };
+    }
+
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"M PLUS Rounded 1c"', 'sans-serif'],
+          },
+          colors: {
+            theme: {
+              50: rgb('--color-theme-50'),
+              100: rgb('--color-theme-100'),
+              200: rgb('--color-theme-200'),
+              300: rgb('--color-theme-300'),
+              400: rgb('--color-theme-400'),
+              500: rgb('--color-theme-500'),
+              600: rgb('--color-theme-600'),
+              700: rgb('--color-theme-700'),
+              800: rgb('--color-theme-800'),
+              900: rgb('--color-theme-900'),
+              950: rgb('--color-theme-950'),
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&display=swap');
+    
+    /* 1. 緑 (エメラルド - デフォルト) */
+    :root, :root[data-color-theme="emerald"] {
+      --color-theme-50: 236 253 245;
+      --color-theme-100: 209 250 229;
+      --color-theme-200: 167 243 208;
+      --color-theme-300: 110 231 183;
+      --color-theme-400: 52 211 153;
+      --color-theme-500: 16 185 129;
+      --color-theme-600: 5 150 105;
+      --color-theme-700: 4 120 87;
+      --color-theme-800: 6 95 70;
+      --color-theme-900: 6 78 59;
+      --color-theme-950: 2 44 34;
+    }
+
+    /* 2. 青 (ブルー) */
+    :root[data-color-theme="blue"] {
+      --color-theme-50: 239 246 255;
+      --color-theme-100: 219 234 254;
+      --color-theme-200: 191 219 254;
+      --color-theme-300: 147 197 253;
+      --color-theme-400: 96 165 250;
+      --color-theme-500: 59 130 246;
+      --color-theme-600: 37 99 235;
+      --color-theme-700: 29 78 216;
+      --color-theme-800: 30 64 175;
+      --color-theme-900: 30 58 138;
+      --color-theme-950: 23 37 84;
+    }
+
+    /* 3. 紫 (パープル) */
+    :root[data-color-theme="purple"] {
+      --color-theme-50: 250 245 255;
+      --color-theme-100: 243 232 255;
+      --color-theme-200: 233 213 255;
+      --color-theme-300: 216 180 254;
+      --color-theme-400: 192 132 252;
+      --color-theme-500: 168 85 247;
+      --color-theme-600: 147 51 234;
+      --color-theme-700: 126 34 206;
+      --color-theme-800: 107 33 168;
+      --color-theme-900: 88 28 135;
+      --color-theme-950: 59 7 100;
+    }
+
+    /* 4. 黄色 (アンバー) */
+    :root[data-color-theme="amber"] {
+      --color-theme-50: 255 251 235;
+      --color-theme-100: 254 243 199;
+      --color-theme-200: 253 230 138;
+      --color-theme-300: 252 211 77;
+      --color-theme-400: 251 191 36;
+      --color-theme-500: 245 158 11;
+      --color-theme-600: 217 119 6;
+      --color-theme-700: 180 83 9;
+      --color-theme-800: 146 64 14;
+      --color-theme-900: 120 53 15;
+      --color-theme-950: 69 26 3;
+    }
+
+    /* 5. オレンジ */
+    :root[data-color-theme="orange"] {
+      --color-theme-50: 255 247 237;
+      --color-theme-100: 255 237 213;
+      --color-theme-200: 254 215 170;
+      --color-theme-300: 253 186 116;
+      --color-theme-400: 251 146 60;
+      --color-theme-500: 249 115 22;
+      --color-theme-600: 234 88 12;
+      --color-theme-700: 194 65 12;
+      --color-theme-800: 154 52 18;
+      --color-theme-900: 124 45 18;
+      --color-theme-950: 67 20 7;
+    }
+
+    /* 6. 灰色 (スレート) */
+    :root[data-color-theme="slate"] {
+      --color-theme-50: 248 250 252;
+      --color-theme-100: 241 245 249;
+      --color-theme-200: 226 232 240;
+      --color-theme-300: 203 213 225;
+      --color-theme-400: 148 163 184;
+      --color-theme-500: 100 116 139;
+      --color-theme-600: 71 85 105;
+      --color-theme-700: 51 65 85;
+      --color-theme-800: 30 41 59;
+      --color-theme-900: 15 23 42;
+      --color-theme-950: 2 6 23;
+    }
+
+    body {
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+    }
+
+    /* 暗記シート用の正解マスクスタイル */
+    .answer-masked {
+      background-color: #ef4444 !important;
+      color: transparent !important;
+      user-select: none;
+      cursor: pointer;
+      border-radius: 0.375rem;
+      padding: 0.125rem 0.5rem;
+      transition: all 0.2s ease;
+      display: inline-block;
+      min-width: 4rem;
+      text-align: center;
+    }
+    .answer-masked:hover {
+      background-color: #dc2626 !important;
+    }
+    .answer-masked.revealed {
+      background-color: #fef2f2 !important;
+      color: #dc2626 !important;
+      user-select: auto;
+      font-weight: bold;
+    }
+    .dark .answer-masked.revealed {
+      background-color: #450a0a !important;
+      color: #fca5a5 !important;
+    }
+
+    /* カスタムスクロールバー */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(107, 114, 128, 0.7);
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: rgba(75, 85, 99, 0.5);
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: rgba(156, 163, 175, 0.7);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100/70 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col justify-between transition-colors duration-300 antialiased selection:bg-theme-500 selection:text-white">
+
+  <!-- ヘッダー -->
+  <header class="bg-theme-600 dark:bg-slate-900 text-white shadow-md sticky top-0 z-50 border-b border-theme-500/30 dark:border-slate-800 transition-colors duration-300 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
+    <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
+      <div class="flex items-center space-x-3 cursor-pointer group" onclick="showHomeScreen()">
+        <div class="w-9 h-9 rounded-xl bg-white/10 dark:bg-slate-800 flex items-center justify-center transition-transform group-hover:scale-105">
+          <i class="fa-solid fa-graduation-cap text-xl text-theme-200 dark:text-theme-400"></i>
+        </div>
+        <div>
+          <h1 class="text-lg md:text-xl font-black tracking-wide group-hover:text-theme-100 transition-colors">情報の知識 一問一答</h1>
+          <span class="text-[10px] bg-theme-700/80 px-2 py-0.5 rounded font-extrabold text-theme-100 block sm:inline-block">王道応援版</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <!-- カラーテーマ選択ドロップダウン -->
+        <div class="relative">
+          <button id="color-theme-btn" onclick="toggleColorMenu()" aria-label="テーマカラー切り替え" class="p-2.5 rounded-xl bg-theme-700/60 hover:bg-theme-700 dark:bg-slate-800 dark:hover:bg-slate-700 text-white transition-all duration-200 active:scale-95 flex items-center justify-center space-x-1 shadow-inner">
+            <i class="fa-solid fa-palette text-lg"></i>
+          </button>
+          <div id="color-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-800 py-2.5 z-50 transition-all transform origin-top-right">
+            <div class="text-[11px] font-extrabold text-slate-400 dark:text-slate-500 px-3.5 pb-2 border-b border-slate-100 dark:border-slate-800/80 mb-1.5 uppercase tracking-wider">テーマカラー選択</div>
+            <button onclick="setColorTheme('emerald')" class="w-full text-left px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-theme-50 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+              <span class="w-4 h-4 rounded-full bg-emerald-500 inline-block shadow-sm ring-2 ring-emerald-200 dark:ring-emerald-900"></span>
+              <span>緑 (エメラルド)</span>
+            </button>
+            <button onclick="setColorTheme('blue')" class="w-full text-left px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+              <span class="w-4 h-4 rounded-full bg-blue-500 inline-block shadow-sm ring-2 ring-blue-200 dark:ring-blue-900"></span>
+              <span>青 (ブルー)</span>
+            </button>
+            <button onclick="setColorTheme('purple')" class="w-full text-left px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-purple-50 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+              <span class="w-4 h-4 rounded-full bg-purple-500 inline-block shadow-sm ring-2 ring-purple-200 dark:ring-purple-900"></span>
+              <span>紫 (パープル)</span>
+            </button>
+            <button onclick="setColorTheme('amber')" class="w-full text-left px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+              <span class="w-4 h-4 rounded-full bg-amber-500 inline-block shadow-sm ring-2 ring-amber-200 dark:ring-amber-900"></span>
+              <span>黄色 (アンバー)</span>
+            </button>
+            <button onclick="setColorTheme('orange')" class="w-full text-left px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-orange-50 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+              <span class="w-4 h-4 rounded-full bg-orange-500 inline-block shadow-sm ring-2 ring-orange-200 dark:ring-orange-900"></span>
+              <span>オレンジ</span>
+            </button>
+            <button onclick="setColorTheme('slate')" class="w-full text-left px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2.5 transition-colors">
+              <span class="w-4 h-4 rounded-full bg-slate-500 inline-block shadow-sm ring-2 ring-slate-200 dark:ring-slate-700"></span>
+              <span>灰色 (スレート)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ダークモード切り替えボタン -->
+        <button id="theme-toggle-btn" onclick="toggleDarkMode()" aria-label="ダークモード切り替え" class="p-2.5 rounded-xl bg-theme-700/60 hover:bg-theme-700 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-300 dark:text-amber-400 transition-all duration-200 active:scale-95 flex items-center justify-center shadow-inner">
+          <i id="theme-toggle-icon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+        <!-- ホームボタン -->
+        <button onclick="showHomeScreen()" class="text-xs md:text-sm bg-theme-700 hover:bg-theme-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white px-3.5 py-2 rounded-xl transition-all duration-200 active:scale-95 font-extrabold flex items-center space-x-1.5 shadow-sm">
+          <i class="fa-solid fa-house"></i>
+          <span class="hidden sm:inline">ホーム</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ領域 -->
+  <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+    <!-- 1. トップ画面 (単元選択 & 設定 & 暗記一覧) -->
+    <div id="screen-home" class="space-y-6">
+      
+      <!-- 設定カード -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6 shadow-sm border border-slate-200/80 dark:border-slate-800/80 transition-colors">
+        <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mb-4 flex items-center">
+          <span class="w-7 h-7 rounded-lg bg-theme-100 dark:bg-theme-950/80 text-theme-600 dark:text-theme-400 inline-flex items-center justify-center mr-2 text-sm">
+            <i class="fa-solid fa-sliders"></i>
+          </span>
+          出題設定
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- 問題順シャッフル -->
+          <div class="flex items-center justify-between p-4 bg-slate-50/80 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+            <div>
+              <span class="font-bold text-slate-800 dark:text-slate-200 block text-sm">問題順のシャッフル</span>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-0.5">ONでランダム出題 / OFFでプリント順</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer ml-3 flex-shrink-0">
+              <input type="checkbox" id="shuffle-questions-toggle" class="sr-only peer" checked>
+              <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-theme-500 shadow-inner"></div>
+            </label>
+          </div>
+
+          <!-- 選択肢シャッフル -->
+          <div class="flex items-center justify-between p-4 bg-slate-50/80 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+            <div>
+              <span class="font-bold text-slate-800 dark:text-slate-200 block text-sm">選択肢のシャッフル</span>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-0.5">ONで「1・2・3・4」の配置をランダム化</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer ml-3 flex-shrink-0">
+              <input type="checkbox" id="shuffle-options-toggle" class="sr-only peer" checked>
+              <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-theme-500 shadow-inner"></div>
+            </label>
+          </div>
+
+          <!-- テスト形式モード -->
+          <div class="flex items-center justify-between p-4 bg-slate-50/80 dark:bg-slate-800/40 rounded-xl border border-slate-200/70 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+            <div>
+              <span class="font-bold text-slate-800 dark:text-slate-200 block text-sm">テスト形式（本番モード）</span>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block mt-0.5">ONで回答後に正誤を出さず全問解答後にまとめて採点</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer ml-3 flex-shrink-0">
+              <input type="checkbox" id="test-mode-toggle" class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-theme-500 shadow-inner"></div>
+            </label>
+          </div>
+        </div>
+        
+        <!-- 機能案内 ＆ 誤答クリア -->
+        <div class="mt-4 text-xs font-semibold text-theme-900 dark:text-theme-200 bg-theme-50/80 dark:bg-theme-950/50 p-3.5 rounded-xl border border-theme-200/80 dark:border-theme-800/50 flex flex-wrap items-center justify-between gap-2.5">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-circle-check text-theme-600 dark:text-theme-400 text-sm flex-shrink-0"></i>
+            <span><strong>学習効果を高めるメッセージ機能付き：</strong> 正解・不正解に応じて前向きな応援メッセージが表示されます。</span>
+          </div>
+          <button id="btn-clear-wrong" onclick="clearWrongHistory()" class="hidden text-xs bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/80 dark:hover:bg-rose-900 dark:text-rose-300 text-rose-700 px-3 py-1.5 rounded-lg transition-all duration-150 font-bold active:scale-95 shadow-sm">
+            <i class="fa-solid fa-trash-can mr-1"></i> 誤答記録リセット
+          </button>
+        </div>
+      </div>
+
+      <!-- 全問スタート & 誤答全復習ボタン -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <button onclick="startQuiz('all', false)" class="w-full bg-gradient-to-r from-theme-600 to-theme-500 hover:from-theme-700 hover:to-theme-600 dark:from-theme-600 dark:to-theme-500 dark:hover:from-theme-500 dark:hover:to-theme-400 text-white font-black py-4 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center space-x-2.5 text-lg tracking-wide border border-theme-400/30">
+          <i class="fa-solid fa-play text-xl"></i>
+          <span>すべての問題（全77問）に挑戦</span>
+        </button>
+        <button id="btn-review-all" onclick="startQuiz('all', true)" class="w-full bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 dark:from-rose-600 dark:to-rose-500 text-white font-black py-4 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center space-x-2.5 text-lg tracking-wide border border-rose-400/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none">
+          <i class="fa-solid fa-rotate-left text-xl"></i>
+          <span>間違えた問題を復習 (<span id="total-wrong-count" class="font-extrabold">0</span>問)</span>
+        </button>
+      </div>
+
+      <!-- 単元選択リスト -->
+      <div class="space-y-3.5">
+        <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 flex items-center">
+          <span class="w-7 h-7 rounded-lg bg-theme-100 dark:bg-theme-950/80 text-theme-600 dark:text-theme-400 inline-flex items-center justify-center mr-2 text-sm">
+            <i class="fa-solid fa-layer-group"></i>
+          </span>
+          単元を選んで復習
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5" id="unit-buttons-container">
+          <!-- JSで自動生成 -->
+        </div>
+      </div>
+
+      <!-- 問題・回答 一覧リスト（暗記確認シート） -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6 shadow-sm border border-slate-200/80 dark:border-slate-800/80 space-y-4 transition-colors">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 flex items-center">
+            <span class="w-7 h-7 rounded-lg bg-theme-100 dark:bg-theme-950/80 text-theme-600 dark:text-theme-400 inline-flex items-center justify-center mr-2 text-sm">
+              <i class="fa-solid fa-book-open"></i>
+            </span>
+            問題・回答 一覧リスト (暗記シート)
+          </h2>
+          
+          <!-- 赤シートトグル -->
+          <div class="flex items-center space-x-2 bg-slate-100/80 dark:bg-slate-800/70 px-3.5 py-1.5 rounded-xl border border-slate-200/70 dark:border-slate-700/60 shadow-inner">
+            <i class="fa-solid fa-eye-slash text-rose-500 dark:text-rose-400 text-sm"></i>
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">正解を隠す (赤シート)</span>
+            <label class="relative inline-flex items-center cursor-pointer ml-1">
+              <input type="checkbox" id="hide-answer-toggle" class="sr-only peer" onchange="renderQuestionsList()">
+              <div class="w-9 h-5 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-500"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 一覧用フィルター＆検索コントロール -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <select id="list-unit-filter" onchange="filterQuestionsList()" class="bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-theme-500 transition-all">
+            <option value="all">全単元を表示</option>
+            <option value="1">1. 見方・考え方 / 問題解決</option>
+            <option value="2">2. ハードウェア・ソフトウェア</option>
+            <option value="3">3. デジタル化とデータ表現</option>
+            <option value="4">4. ネットワークとURL構造</option>
+            <option value="5">5. セキュリティと情報モラル</option>
+            <option value="6">6. 知的財産権と情報利用</option>
+            <option value="7">7. アルゴリズムとプログラミング基礎</option>
+            <option value="8">8. 処理構造と変数</option>
+            <option value="9">9. メディアコンテンツと設計</option>
+          </select>
+          <div class="sm:col-span-2 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+            <input type="text" id="list-search-input" oninput="filterQuestionsList()" placeholder="問題文や用語で検索..." class="w-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-medium p-3 pl-9 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-theme-500 transition-all">
+          </div>
+        </div>
+
+        <!-- テーブル表示エリア -->
+        <div class="overflow-x-auto rounded-xl border border-slate-200/80 dark:border-slate-800 max-h-[500px] overflow-y-auto shadow-inner">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100/90 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 font-extrabold sticky top-0 border-b border-slate-200 dark:border-slate-700 backdrop-blur-sm">
+              <tr>
+                <th class="p-3 w-16 text-center">ID</th>
+                <th class="p-3 w-36">単元</th>
+                <th class="p-3">問題文</th>
+                <th class="p-3 w-64">選択肢 (1〜4)</th>
+                <th class="p-3 w-32">正解</th>
+              </tr>
+            </thead>
+            <tbody id="all-questions-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 bg-white dark:bg-slate-900">
+              <!-- JSで動的生成 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2. クイズ解答画面 -->
+    <div id="screen-quiz" class="hidden space-y-4">
+      
+      <!-- ステータスバー ＆ 進行度グラデーションゲージ -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 md:p-5 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-3.5 transition-colors">
+        <div class="flex flex-wrap justify-between items-center gap-2">
+          <div class="flex items-center space-x-2">
+            <span id="quiz-unit-badge" class="bg-theme-100 dark:bg-theme-950/80 text-theme-800 dark:text-theme-300 font-extrabold text-xs px-3 py-1 rounded-full border border-theme-200 dark:border-theme-800/60 shadow-sm">
+              単元
+            </span>
+            <span id="quiz-mode-badge" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
+              全問出題
+            </span>
+          </div>
+          
+          <div class="flex items-center space-x-3 text-sm font-bold text-slate-600 dark:text-slate-300">
+            <span class="text-xs font-bold bg-theme-50 dark:bg-theme-950/50 text-theme-700 dark:text-theme-400 border border-theme-200/80 dark:border-theme-800 px-2.5 py-1 rounded-lg flex items-center">
+              <i class="fa-solid fa-arrows-rotate text-[10px] mr-1.5"></i>1周重複なし
+            </span>
+            <div class="font-bold">
+              問題 <span id="current-q-num" class="text-theme-600 dark:text-theme-400 text-2xl font-black">1</span> / <span id="total-q-num" class="font-extrabold">10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 進行度ゲージ -->
+        <div class="space-y-1.5 pt-1">
+          <div class="flex justify-between items-center text-xs font-extrabold text-slate-600 dark:text-slate-400">
+            <span class="flex items-center"><i class="fa-solid fa-chart-line mr-1.5 text-rose-500"></i>進行度</span>
+            <span id="quiz-progress-text" class="font-mono text-theme-600 dark:text-theme-400 font-black tracking-tight">0% (0/0)</span>
+          </div>
+          <div class="w-full h-3.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-200/80 dark:border-slate-700 shadow-inner">
+            <div id="quiz-progress-bar" class="h-full rounded-full bg-gradient-to-r from-rose-500 via-fuchsia-500 to-purple-600 transition-all duration-500 ease-out shadow-sm" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 問題表示カード -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-7 shadow-md border border-slate-200/80 dark:border-slate-800 space-y-6 transition-colors">
+        
+        <!-- 原本ID & 問題文 -->
+        <div>
+          <div class="text-xs font-extrabold text-slate-400 dark:text-slate-500 mb-2 flex items-center justify-between">
+            <span id="pdf-question-id" class="bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">PDF原本 問1</span>
+            <span id="review-tag" class="hidden text-rose-600 dark:text-rose-400 font-black bg-rose-50 dark:bg-rose-950/80 px-2.5 py-0.5 rounded-md border border-rose-200 dark:border-rose-900 shadow-sm">要復習</span>
+          </div>
+          <h3 id="question-text" class="text-lg md:text-xl font-black text-slate-800 dark:text-slate-100 leading-relaxed tracking-wide">
+            問題文がここに入ります。
+          </h3>
+        </div>
+
+        <!-- 次の問題へ進むボタン -->
+        <div id="next-button-area" class="hidden pt-1">
+          <button id="btn-next-question" onclick="nextQuestion()" class="w-full bg-gradient-to-r from-theme-600 to-theme-500 hover:from-theme-700 hover:to-theme-600 text-white font-black py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-150 flex items-center justify-center space-x-2 text-base md:text-lg animate-bounce active:scale-[0.99] border border-theme-400/30">
+            <span>次の問題へ</span>
+            <span class="text-xs font-semibold opacity-90 bg-black/20 px-2.5 py-0.5 rounded-md">(Space / Enter)</span>
+            <i class="fa-solid fa-arrow-right ml-1"></i>
+          </button>
+        </div>
+
+        <!-- 正解・不正解 フィードバック表示エリア -->
+        <div id="feedback-area" class="hidden p-4 md:p-5 rounded-2xl text-center space-y-1.5 transition-all shadow-md">
+          <div id="feedback-result" class="text-2xl font-black"></div>
+          <div id="feedback-message" class="text-base font-extrabold text-slate-800 dark:text-slate-100"></div>
+          <div id="feedback-detail" class="text-xs font-bold opacity-90"></div>
+        </div>
+
+        <!-- 選択肢ボタン群 (1・2・3・4) -->
+        <div id="options-container" class="grid grid-cols-1 gap-3.5 pt-1">
+          <!-- JSで4つの選択肢を動的生成 -->
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 3. 結果画面 -->
+    <div id="screen-result" class="hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 shadow-md border border-slate-200/80 dark:border-slate-800 text-center space-y-6 transition-colors">
+        <div class="inline-flex p-4 bg-theme-100/70 dark:bg-theme-950/80 rounded-2xl text-theme-600 dark:text-theme-400 mb-1 ring-4 ring-theme-50 dark:ring-theme-900/40">
+          <i class="fa-solid fa-trophy text-4xl md:text-5xl"></i>
+        </div>
+        
+        <h2 class="text-2xl md:text-3xl font-black text-slate-800 dark:text-slate-100 tracking-wide">お疲れ様でした！</h2>
+        
+        <div class="bg-gradient-to-b from-slate-50 to-slate-100/80 dark:from-slate-800/80 dark:to-slate-800/40 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700 max-w-sm mx-auto shadow-inner space-y-1">
+          <div class="text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">あなたのスコア</div>
+          <div class="text-4xl md:text-5xl font-black text-theme-600 dark:text-theme-400">
+            <span id="result-score">0</span> <span class="text-2xl text-slate-400 dark:text-slate-500 font-bold">/ <span id="result-total">0</span></span>
+          </div>
+          <div id="result-percentage" class="text-sm font-extrabold text-slate-700 dark:text-slate-300 pt-1">正解率 0%</div>
+        </div>
+
+        <p id="result-message" class="text-slate-700 dark:text-slate-200 font-extrabold text-base md:text-lg">
+          素晴らしい結果です！
+        </p>
+
+        <!-- アクションボタン -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2 max-w-md mx-auto">
+          <button onclick="retryCurrentQuiz()" class="bg-theme-600 hover:bg-theme-700 dark:bg-theme-600 dark:hover:bg-theme-500 text-white font-extrabold py-3.5 px-6 rounded-xl shadow-md transition-all duration-150 active:scale-95 flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>もう一度解く</span>
+          </button>
+          <button onclick="showHomeScreen()" class="bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold py-3.5 px-6 rounded-xl transition-all duration-150 active:scale-95 flex items-center justify-center space-x-2 border border-slate-300/60 dark:border-slate-700">
+            <i class="fa-solid fa-house"></i>
+            <span>トップに戻る</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 今回間違えた問題の振り返り / テスト結果一覧 -->
+      <div id="session-wrong-section" class="bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-4 hidden transition-colors">
+        <h3 id="result-detail-title" class="font-extrabold text-rose-600 dark:text-rose-400 flex items-center text-base">
+          <i class="fa-solid fa-triangle-exclamation mr-2"></i> 今回間違えた問題
+        </h3>
+        <div id="session-wrong-list" class="space-y-2.5 text-sm">
+          <!-- JSで生成 -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+    <div class="max-w-5xl mx-auto px-4">
+      情報の知識 一問一答クイズ (王道応援版) &copy; 2026 - 全77問重複除去・学習応援メッセージ対応版
+    </div>
+  </footer>
+
+  <!-- クイズロジック JavaScript -->
+  <script>
+    // 1. 重複を排除した完全な一意の問題データベース（全77問）
+    const ALL_QUESTIONS = [
+      // 単元1: 見方・考え方 / 問題解決
+      { id: 1, unit: 1, pdfId: "問1", q: "身の回りにある製品は、「社会からの要求」「経済性」「環境への負荷」のほかにどのような要求を実現しようとしているか。", options: ["安全性", "電気", "スマートフォン", "掃除機"], answer: "安全性" },
+      { id: 2, unit: 1, pdfId: "問2", q: "アプリの制作時に材料費や開発日数の削減を考えることは何についての検討か。", options: ["経済性", "社会からの要求", "環境への負荷", "安全性"], answer: "経済性" },
+      { id: 3, unit: 1, pdfId: "問3", q: "スマートフォン画面の文字が小さくて見えづらい人のために文字を大きくすることは、何の要求に応えることか。", options: ["社会からの要求", "経済性", "環境への負荷", "安全性"], answer: "社会からの要求" },
+      { id: 4, unit: 1, pdfId: "問4", q: "社会から実現を望まれているアプリを作るときに、制作費と使いやすさ・セキュリティなどの折り合いをつけることを何というか。", options: ["最適化", "具現化", "共有化", "安全性"], answer: "最適化" },
+      { id: 5, unit: 1, pdfId: "問5", q: "植物栽培において天候データを取得してAIなどで降雨量予測を立て、潅水量を調整することは何につながるか。", options: ["環境への負荷軽減", "少子化", "具現化", "安全性"], answer: "環境への負荷軽減" },
+      { id: 6, unit: 1, pdfId: "問6", q: "問題解決において問題を発見したら、次に（構想の前に）何を行うべきか。", options: ["課題を設定", "改良点を設定", "評価", "デバッグ"], answer: "課題を設定" },
+      { id: 7, unit: 1, pdfId: "問7", q: "課題を設定したら、制作に向けて解決策の構想や制作品の何をするか。", options: ["設計", "振り返り", "修正", "実装"], answer: "設計" },
+      { id: 8, unit: 1, pdfId: "問8", q: "制作（製作）が終了したら制作物を使って、課題の解決状況をどうするか。", options: ["評価", "改良", "点検", "設計"], answer: "評価" },
+      { id: 9, unit: 1, pdfId: "問9", q: "新しい製品や技術を検討するときは生産者からの見方だけでなく、誰からの見方が大切か。", options: ["利用者", "動物", "植物", "過去の偉人"], answer: "利用者" },
+      { id: 10, unit: 1, pdfId: "問10", q: "生成AIを利用するときに個人情報を入れてはいけない理由はどれか。", options: ["情報が漏れるから", "返答が遅れるから", "料金が上がるから", "AIが壊れるから"], answer: "情報が漏れるから" },
+
+      // 単元2: ハードウェア・ソフトウェア
+      { id: 11, unit: 2, pdfId: "問11", q: "ソフトウェアのうち、基本的な土台として働くものを何というか。", options: ["オペレーティングシステム", "アプリケーションソフトウェア", "ネットワーク", "インターネット"], answer: "オペレーティングシステム" },
+      { id: 12, unit: 2, pdfId: "問12", q: "ソフトウェアのうち、目的に応じて機能するものを何というか。", options: ["アプリケーションソフトウェア", "ハードウェア", "ネットワーク", "インターネット"], answer: "アプリケーションソフトウェア" },
+      { id: 13, unit: 2, pdfId: "問13", q: "マウスの操作で、(左)ボタンを押したまま移動させることを何というか。", options: ["ドラッグ", "クリック", "ダブルクリック", "右クリック"], answer: "ドラッグ" },
+      { id: 14, unit: 2, pdfId: "問14", q: "マウスの操作で、メニューなどを選択するときにする動作はどれか。", options: ["クリック", "ダブルクリック", "ドラッグ", "スクロール"], answer: "クリック" },
+      { id: 15, unit: 2, pdfId: "問15", q: "Webページを見るときに使用するソフトは何か。", options: ["ブラウザソフト", "計算ソフト", "メールソフト", "作成ソフト"], answer: "ブラウザソフト" },
+      { id: 16, unit: 2, pdfId: "問16", q: "文字や数値、画像などの情報をコンピュータに入れる機能のことを何というか。", options: ["入力機能", "出力機能", "処理機能", "記憶機能"], answer: "入力機能" },
+      { id: 17, unit: 2, pdfId: "問17", q: "情報技術を利用するためのコンピュータ本体やその周辺装置を何というか。", options: ["ハードウエア", "キーボード", "ソフトウエア", "リモコン"], answer: "ハードウエア" },
+      { id: 18, unit: 2, pdfId: "問18", q: "CPU(中央処理装置)の機能は、制御機能ともう一つは何か。", options: ["演算", "記憶", "出力", "入力"], answer: "演算" },
+      { id: 19, unit: 2, pdfId: "問19", q: "ハードディスクがもつ機能は何か。", options: ["記憶", "演算", "出力", "入力"], answer: "記憶" },
+      { id: 20, unit: 2, pdfId: "問20", q: "ハードウエアどうしを無線接続する方法にはWi-Fiや何があるか。", options: ["ブルートゥース", "イーサネット", "ブリッジ", "USBケーブル"], answer: "ブルートゥース" },
+
+      // 単元3: デジタル化とデータ表現
+      { id: 21, unit: 3, pdfId: "問21", q: "アナログ情報を0と1の組み合わせである情報に置き換えることを何というか。", options: ["デジタル化", "簡易化", "統合化", "アナログ化"], answer: "デジタル化" },
+      { id: 22, unit: 3, pdfId: "問22", q: "アナログ信号からデジタル信号に変換することを「何変換」というか。", options: ["A/D", "D/A", "直流", "交流"], answer: "A/D" },
+      { id: 23, unit: 3, pdfId: "問23", q: "情報をデジタル化するとコンピュータでどのようになるか。", options: ["扱いやすく", "劣化しやすく", "処理しにくく", "あいまいに"], answer: "扱いやすく" },
+      { id: 24, unit: 3, pdfId: "問24", q: "デジタル化された情報は記憶媒体にどうすることができるか。", options: ["保存", "送信", "計算", "表示"], answer: "保存" },
+      { id: 25, unit: 3, pdfId: "問25", q: "デジタル化された情報をより少ないデータ量に変換することを何というか。", options: ["圧縮", "バックアップ", "暗号化", "解凍"], answer: "圧縮" },
+      { id: 26, unit: 3, pdfId: "問26", q: "4つの中で一番データ量が多いのはどれか。", options: ["1TB", "1B", "1MB", "1GB"], answer: "1TB" },
+      { id: 27, unit: 3, pdfId: "問27", q: "画像を構成している点を何というか。", options: ["画素", "解像度", "データ", "OS"], answer: "画素" },
+      { id: 28, unit: 3, pdfId: "問28", q: "一定間隔あたりの画素の数のことを何というか。", options: ["解像度", "フレームレート", "階調", "ピクセル"], answer: "解像度" },
+      { id: 29, unit: 3, pdfId: "問29", q: "解像度が高くなると、画像はよりどうなるか。", options: ["精細", "軽量", "カラフル", "不鮮明"], answer: "精細" },
+      { id: 30, unit: 3, pdfId: "問30", q: "画像をよりきめ細かくきれいにするとデータ量はどうなるか。", options: ["増える", "半分になる", "変わらない", "減る"], answer: "増える" },
+
+      // 単元4: ネットワークとURL
+      { id: 31, unit: 4, pdfId: "問31", q: "学校や企業のネットワークを接続しあった世界規模のネットワークを何というか。", options: ["インターネット", "SNS", "インスタ", "ワールドワイド"], answer: "インターネット" },
+      { id: 32, unit: 4, pdfId: "問32", q: "インターネットにつながる、情報機器を識別する番号を何というか。", options: ["IPアドレス", "機械番号", "URL", "ユーザーID"], answer: "IPアドレス" },
+      { id: 33, unit: 4, pdfId: "問33", q: "自分の見たいWebページを探すとき使用するものは何か。", options: ["検索エンジン", "バックアップソフト", "画像編集ソフト", "文書作成ソフト"], answer: "検索エンジン" },
+      { id: 34, unit: 4, pdfId: "問34", q: "http://www.xxxxx.co.jp/xxxx-xx/index.html で「.html」が表しているものは何か。", options: ["拡張子", "国名", "プロトコル", "ドメイン名"], answer: "拡張子" },
+      { id: 35, unit: 4, pdfId: "問35", q: "http://www.xxxxx.co.jp/xxxx-xx/index.html で「.jp」が表しているものは何か。", options: ["国名", "拡張子", "プロトコル", "ドメイン名"], answer: "国名" },
+      { id: 36, unit: 4, pdfId: "問36", q: "http://www.xxxxx.co.jp/xxxx-xx/index.html で「.co」が表しているものは何か。", options: ["組織の種類", "プロトコル", "ドメイン名", "組織名"], answer: "組織の種類" },
+      { id: 37, unit: 4, pdfId: "問37", q: "http://www.xxxxx.co.jp/xxxx-xx/index.html で「/xxxx-xx/」が表しているものは何か。", options: ["フォルダ名", "ドメイン名", "組織の種類", "組織名"], answer: "フォルダ名" },
+      { id: 38, unit: 4, pdfId: "問38", q: "http://www.xxxxx.co.jp/xxxx-xx/index.html で「xxxxx」が表しているものは何か。", options: ["組織名", "ファイル名", "ドメイン名", "組織の種類"], answer: "組織名" },
+      { id: 39, unit: 4, pdfId: "問39", q: "http://www.xxxxx.co.jp/xxxx-xx/index.html で「www.xxxxx.co.jp」のまとまりは何を表すか。", options: ["ドメイン名", "拡張子", "国名", "プロトコル"], answer: "ドメイン名" },
+      { id: 40, unit: 4, pdfId: "問40", q: "電子メールでは、本文の内容がわかるように何をつけるか。", options: ["タイトル", "アドレス", "署名", "Cc"], answer: "タイトル" },
+
+      // 単元5: セキュリティと情報モラル
+      { id: 41, unit: 5, pdfId: "問41", q: "自分で撮影した写真をインターネットで公開するときに特に注意することはどれか。", options: ["プライバシー情報の漏えい", "風評被害", "著作権", "信ぴょう性・正確性"], answer: "プライバシー情報の漏えい" },
+      { id: 42, unit: 5, pdfId: "問42", q: "利用した店の感想を発信するときに注意することはどれか。", options: ["風評被害", "プライバシー情報の漏えい", "著作権", "信ぴょう性・正確性"], answer: "風評被害" },
+      { id: 43, unit: 5, pdfId: "問43", q: "インターネットで公開されている動画をダウンロードするときに注意することはどれか。", options: ["著作権", "風評被害", "プライバシー情報の漏えい", "信ぴょう性・正確性"], answer: "著作権" },
+      { id: 44, unit: 5, pdfId: "問44", q: "入力されたIDやパスワードなどから本人確認を行い、なりすましを防ぐ技術を何というか。", options: ["認証システム", "暗号化", "ファイアウォール", "バックアップ"], answer: "認証システム" },
+      { id: 45, unit: 5, pdfId: "問45", q: "情報セキュリティの3要素とは、可用性、完全性と何か。", options: ["機密性", "可変性", "スピード", "信ぴょう性"], answer: "機密性" },
+      { id: 46, unit: 5, pdfId: "問46", q: "セキュリティ対策ソフトは、機器が何に感染するのを防ぐのか。", options: ["コンピュータウイルス", "ファイアウォール", "ブラックリスト", "ハッカー"], answer: "コンピュータウイルス" },
+      { id: 47, unit: 5, pdfId: "問47", q: "特定の民族や国籍の人に対する差別的言動を何というか。", options: ["ヘイトスピーチ", "セキュリティ", "著作権", "デモ"], answer: "ヘイトスピーチ" },
+      { id: 48, unit: 5, pdfId: "問48", q: "風評被害やヘイトスピーチにあたる情報は、発信だけでなく何をしてはいけないか。", options: ["転送", "閲覧", "印刷", "保存"], answer: "転送" },
+      { id: 49, unit: 5, pdfId: "問49", q: "アンケートに答えたら知らない人からのメールが届くようになったのは、何が流出したためか。", options: ["個人情報", "著作権", "肖像権", "特許権"], answer: "個人情報" },
+      { id: 50, unit: 5, pdfId: "問50", q: "コンピュータの電源を入れてサインインする際、ユーザーIDと何を入力するか。", options: ["PW", "誕生日", "電話番号", "出席番号"], answer: "PW" },
+
+      // 単元6: 知的財産権と情報利用
+      { id: 51, unit: 6, pdfId: "問51", q: "中学生の描いた絵に、著作権はどうなるか。", options: ["発生する", "発生しない", "上手であれば発生する", "デジタル化されていなければ発生しない"], answer: "発生する" },
+      { id: 52, unit: 6, pdfId: "問52", q: "インターネットを利用して調べものをするときに注意することはどれか。", options: ["信ぴょう性・正確性", "風評被害", "プライバシー情報の漏えい", "著作権"], answer: "信ぴょう性・正確性" },
+      { id: 53, unit: 6, pdfId: "問53", q: "知的財産権には、著作物にかかわる著作権のほかに特許・実用新案・意匠・商標にかかわるものがある。それは何か。", options: ["産業財産権", "人権", "著作権", "著作者人格権"], answer: "産業財産権" },
+      { id: 54, unit: 6, pdfId: "問54", q: "鉛筆を発明したことに関する権利は、知的財産権のどれに該当するか。", options: ["特許権", "著作権", "実用新案権", "意匠権"], answer: "特許権" },
+      { id: 55, unit: 6, pdfId: "問55", q: "鉛筆を持ちやすく六角形にしたことに関する権利はどれに該当するか。", options: ["実用新案権", "特許権", "著作権", "意匠権"], answer: "実用新案権" },
+      { id: 56, unit: 6, pdfId: "問56", q: "色や形、デザインに関する権利はどれか。", options: ["意匠権", "特許権", "著作権", "実用新案権"], answer: "意匠権" },
+      { id: 57, unit: 6, pdfId: "問57", q: "自社商品だということを示すマーク・目印などに関する権利はどれか。", options: ["商標権", "著作権", "実用新案権", "著作者人格権"], answer: "商標権" },
+      { id: 58, unit: 6, pdfId: "問58", q: "新しく開発したプログラムに関する権利はどれか。", options: ["著作権", "商標権", "実用新案権", "意匠権"], answer: "著作権" },
+      { id: 59, unit: 6, pdfId: "問59", q: "自分が写っている写真を友達が無断でインターネット上で公開した。何の侵害にあたるか。", options: ["肖像権", "著作権", "特許権", "意匠権"], answer: "肖像権" },
+      { id: 60, unit: 6, pdfId: "問60", q: "自分が購入した漫画の一部をWeb上で公開した。何の侵害にあたるか。", options: ["著作権", "特許権", "肖像権", "意匠権"], answer: "著作権" },
+
+      // 単元7: アルゴリズムとプログラミングの基礎
+      { id: 62, unit: 7, pdfId: "問62", q: "データがなくなる場合に備えてコピーしておくことを何というか。", options: ["バックアップ", "暗号化", "フィルタリング", "不正侵入"], answer: "バックアップ" },
+      { id: 63, unit: 7, pdfId: "問63", q: "一般的なマウス操作で、ファイルを開いたりソフトウェアを起動したりするときにする動作はどれか。", options: ["ダブルクリック", "ペースト", "ドラッグ", "スクロール"], answer: "ダブルクリック" },
+      { id: 64, unit: 7, pdfId: "問64", q: "複数のファイルを、階層的に整理して管理するときに使うものはどれか。", options: ["フォルダ", "引き出し", "箱", "カバン"], answer: "フォルダ" },
+      { id: 65, unit: 7, pdfId: "問65", q: "プログラムとは、処理の方法や手順をどのような形で記述したものか。", options: ["命令", "提案", "修正", "実行"], answer: "命令" },
+      { id: 66, unit: 7, pdfId: "問66", q: "プログラムの動作に関して、処理の手順や構造を何というか。", options: ["アルゴリズム", "ポリリズム", "リアリズム", "ナショナリズム"], answer: "アルゴリズム" },
+      { id: 67, unit: 7, pdfId: "問67", q: "プログラムには、コンピュータが認識できる何を用いるか。", options: ["プログラミング言語", "カタカナ", "ローマ字", "数字"], answer: "プログラミング言語" },
+      { id: 68, unit: 7, pdfId: "問68", q: "複数の情報処理の手順を統合して、全体の手順などを確認できるものを何図というか。", options: ["アクティビティ", "画面", "構成", "仕様"], answer: "アクティビティ" },
+      { id: 69, unit: 7, pdfId: "問69", q: "情報処理のアルゴリズムを表現した図を何というか。", options: ["フローチャート", "画面", "仕様", "構成"], answer: "フローチャート" },
+
+      // 単元8: プログラミングの処理構造と変数
+      { id: 72, unit: 8, pdfId: "問72", q: "プログラムを作成する際は、目的とする処理の達成までの何をフローチャートなどで表現するか。", options: ["手順", "入力", "出力", "判断"], answer: "手順" },
+      { id: 73, unit: 8, pdfId: "問73", q: "プログラム作成後、実際に実行してみて、修正を加えることを何というか。", options: ["デバッグ", "バグ", "センサ", "アイコン"], answer: "デバッグ" },
+      { id: 74, unit: 8, pdfId: "問74", q: "プログラムでデータを保存したりとりだしたりする際に使うものを何というか。", options: ["変数", "デバッグ", "バグ", "アイコン"], answer: "変数" },
+      { id: 75, unit: 8, pdfId: "問75", q: "「人がいるときにはライトをつける、いないときには消す」というのはどの処理か。", options: ["分岐", "順次", "反復", "合体"], answer: "分岐" },
+
+      // 単元9: コンテンツの特徴と設計
+      { id: 76, unit: 9, pdfId: "問76", q: "コンテンツとは、デジタル化されたメディアを使用し、何のある情報として表現した内容か。", options: ["意味", "音", "画像", "文章"], answer: "意味" },
+      { id: 77, unit: 9, pdfId: "問77", q: "双方向性とは、使用者の何によって出力する機能を指すか。", options: ["入力", "想像", "考え", "条件"], answer: "入力" },
+      { id: 78, unit: 9, pdfId: "問78", q: "文字によるコンテンツの良い点はどれか。", options: ["作成が簡単で、修正できる", "視覚障害のある人にも伝えられる", "デジタルカメラなどで簡単に作成できる", "情報に動きをもたせ、変化を強調できる"], answer: "作成が簡単で、修正できる" },
+      { id: 79, unit: 9, pdfId: "問79", q: "音声によるコンテンツの良い点はどれか。", options: ["視覚障害のある人にも伝えられる", "作成が簡単で、修正できる", "デジタルカメラなどで簡単に作成できる", "情報に動きをもたせ、変化を強調できる"], answer: "視覚障害のある人にも伝えられる" },
+      { id: 80, unit: 9, pdfId: "問80", q: "静止画によるコンテンツの良い点はどれか。", options: ["デジタルカメラなどで簡単に作成できる", "作成が簡単で、修正できる", "視覚障害のある人にも伝えられる", "情報に動きをもたせ、変化を強調できる"], answer: "デジタルカメラなどで簡単に作成できる" },
+      { id: 81, unit: 9, pdfId: "問81", q: "動画によるコンテンツの良い点はどれか。", options: ["情報に動きをもたせ、変化を強調できる", "作成が簡単で、修正できる", "視覚障害のある人にも伝えられる", "デジタルカメラなどで簡単に作成できる"], answer: "情報に動きをもたせ、変化を強調できる" },
+      { id: 82, unit: 9, pdfId: "問82", q: "文字によるコンテンツのマイナス面はどれか。", options: ["多くの情報を伝えにくい", "データ量がやや多い", "時間をかけて聞く必要がある", "データを修正しにくい"], answer: "多くの情報を伝えにくい" },
+      { id: 83, unit: 9, pdfId: "問83", q: "音声によるコンテンツのマイナス面はどれか。", options: ["時間をかけて聞く必要がある", "データ量がやや多い", "多くの情報を伝えにくい", "データを修正しにくい"], answer: "時間をかけて聞く必要がある" },
+      { id: 84, unit: 9, pdfId: "問84", q: "動画のコンテンツには、一般的にどのようなマイナス面があるか。最も適したものを1つ選べ。", options: ["編集・修正に時間がかかる", "スマートフォンでは再生できない", "多くの情報を伝えにくい", "1回しか見ることができない"], answer: "編集・修正に時間がかかる" },
+      { id: 85, unit: 9, pdfId: "問85", q: "静止画のコンテンツには、動画のコンテンツにくらべて、一般的にどのようなマイナス面があるか。", options: ["動きをもたせにくい", "編集・修正に時間がかかる", "スマートフォンでは再生できない", "1回しか見ることができない"], answer: "動きをもたせにくい" },
+      { id: 86, unit: 9, pdfId: "問86", q: "制作したコンテンツはだれもが使いやすいような何のプロジェクト/デザインにすることが望ましいか。", options: ["ユニバーサル", "エブリバディ", "オール", "ライト"], answer: "ユニバーサル" },
+      { id: 87, unit: 9, pdfId: "問87", q: "コンテンツの構想・設計の流れでは、最初に構想の何が必要か。", options: ["具体化", "抽象化", "最大化", "最小化"], answer: "具体化" },
+      { id: 88, unit: 9, pdfId: "問88", q: "コンテンツの構想・設計の流れでは、構想の具体化のあと、情報処理の何を整理するか。", options: ["手順", "意味", "入力", "出力"], answer: "手順" },
+      { id: 89, unit: 9, pdfId: "問89", q: "情報処理の手順の整理に利用するものはどれか。", options: ["アクティビティ図", "説明書", "画面", "動画"], answer: "アクティビティ図" },
+      { id: 90, unit: 9, pdfId: "問90", q: "コンテンツの構想・設計の流れでは、最後に必要な何の整理をするか。", options: ["機能", "書類", "数字", "条件"], answer: "機能" }
+    ];
+
+    // 単元メタ情報定義
+    const UNITS_INFO = {
+      1: { name: "1. 見方・考え方 / 問題解決", icon: "fa-lightbulb" },
+      2: { name: "2. ハードウェア・ソフトウェア", icon: "fa-desktop" },
+      3: { name: "3. デジタル化とデータ表現", icon: "fa-database" },
+      4: { name: "4. ネットワークとURL構造", icon: "fa-globe" },
+      5: { name: "5. セキュリティと情報モラル", icon: "fa-shield-halved" },
+      6: { name: "6. 知的財産権と情報利用", icon: "fa-scale-balanced" },
+      7: { name: "7. アルゴリズムとプログラミング基礎", icon: "fa-code" },
+      8: { name: "8. 処理構造と変数", icon: "fa-gears" },
+      9: { name: "9. メディアコンテンツと設計", icon: "fa-photo-film" }
+    };
+
+    // アプリ状態変数
+    let wrongQuestionsMap = {};
+    let currentQuizList = [];
+    let currentQuestionIndex = 0;
+    let sessionScore = 0;
+    let selectedUnitId = 'all';
+    let isReviewMode = false;
+    let isTestMode = false;
+    let userAnswers = [];
+    let sessionWrongQuestions = [];
+    let isAnswered = false;
+
+    // ★ 正解時メッセージ（王道・ポジティブ応援メッセージ） ★
+    const PRAISE_MESSAGES = [
+      "見事な正解！その調子で次もいこう！",
+      "素晴らしい！知識がしっかり定着していますね！",
+      "完璧！全問正解も夢じゃない！",
+      "ナイス解答！冴えてますね！",
+      "大正解！日頃の勉強の成果が出ました！",
+      "正解！この調子でどんどん進めよう！",
+      "素晴らしい判断力！完璧な解答です！",
+      "正解！自信を持ってこのまま突き進もう！",
+      "天才的！迷いなく正解を導き出せましたね！",
+      "Excellent! その調子でパーフェクトを目指そう！",
+      "ブラボー！バッチリ理解できています！",
+      "完璧な正解！学習の成果が目に見えて出ています！"
+    ];
+
+    // ★ 不正解時メッセージ（王道・ポジティブ応援メッセージ） ★
+    const ENCOURAGE_MESSAGES = [
+      "惜しい！間違いは成長のチャンスです！",
+      "どんまい！次は必ず正解できますよ！",
+      "大丈夫！ここで覚えたら本番で得点源になります！",
+      "次は絶対大丈夫！気を取り直してチャレンジ！",
+      "ナイスチャレンジ！復習して完璧にしましょう！",
+      "焦らずいこう！一歩ずつ前進しています！",
+      "惜しかった！解説を確認して次へ進もう！",
+      "問題なし！間違えた分だけ確実に賢くなれます！",
+      "惜しい選択！次は自信を持って正解を選べます！",
+      "失敗は成功のもと！ここからが本番です！"
+    ];
+
+    // 正解メッセージ抽選関数
+    function getPraiseMessage() {
+      return PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
+    }
+
+    // 不正解メッセージ抽選関数
+    function getEncourageMessage() {
+      return ENCOURAGE_MESSAGES[Math.floor(Math.random() * ENCOURAGE_MESSAGES.length)];
+    }
+
+    // 初期化関数
+    window.addEventListener('DOMContentLoaded', () => {
+      initColorTheme();
+      initDarkMode();
+      loadWrongHistory();
+      renderUnitButtons();
+      updateWrongCountBadges();
+      renderQuestionsList();
+    });
+
+    // カラーテーマ制御
+    function setColorTheme(theme) {
+      document.documentElement.setAttribute('data-color-theme', theme);
+      localStorage.setItem('info_quiz_color_theme_std', theme);
+      const menu = document.getElementById('color-menu');
+      if (menu) menu.classList.add('hidden');
+    }
+
+    function initColorTheme() {
+      const saved = localStorage.getItem('info_quiz_color_theme_std') || 'emerald';
+      setColorTheme(saved);
+    }
+
+    function toggleColorMenu() {
+      const menu = document.getElementById('color-menu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    window.addEventListener('click', (e) => {
+      const btn = document.getElementById('color-theme-btn');
+      const menu = document.getElementById('color-menu');
+      if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    // ダークモード制御
+    function initDarkMode() {
+      const savedTheme = localStorage.getItem('info_quiz_theme_std');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+        updateThemeIcon(true);
+      } else {
+        document.documentElement.classList.remove('dark');
+        updateThemeIcon(false);
+      }
+    }
+
+    function toggleDarkMode() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('info_quiz_theme_std', isDark ? 'dark' : 'light');
+      updateThemeIcon(isDark);
+    }
+
+    function updateThemeIcon(isDark) {
+      const icon = document.getElementById('theme-toggle-icon');
+      if (isDark) {
+        icon.className = 'fa-solid fa-sun text-lg';
+      } else {
+        icon.className = 'fa-solid fa-moon text-lg';
+      }
+    }
+
+    // Web Audio API による効果音再生
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(isCorrect) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (isCorrect) {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      } else {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(174.61, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      }
+    }
+
+    // 誤答履歴の読み込み
+    function loadWrongHistory() {
+      const saved = localStorage.getItem('info_quiz_wrong_map_std');
+      if (saved) {
+        try {
+          wrongQuestionsMap = JSON.parse(saved);
+        } catch(e) {
+          wrongQuestionsMap = {};
+        }
+      }
+    }
+
+    // 誤答履歴の保存
+    function saveWrongHistory() {
+      localStorage.setItem('info_quiz_wrong_map_std', JSON.stringify(wrongQuestionsMap));
+      updateWrongCountBadges();
+    }
+
+    // 誤答リセット
+    function clearWrongHistory() {
+      if (confirm('保存されているすべての誤答記録を消去しますか？')) {
+        wrongQuestionsMap = {};
+        saveWrongHistory();
+      }
+    }
+
+    // 単元別ボタンの動的生成
+    function renderUnitButtons() {
+      const container = document.getElementById('unit-buttons-container');
+      container.innerHTML = '';
+
+      Object.keys(UNITS_INFO).forEach(unitId => {
+        const u = UNITS_INFO[unitId];
+        const count = ALL_QUESTIONS.filter(q => q.unit == unitId).length;
+        
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between space-y-3.5 hover:border-theme-400 dark:hover:border-theme-500/80 transition-all duration-200 hover:shadow-md";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-9 h-9 rounded-xl bg-theme-100/80 dark:bg-theme-950/80 text-theme-700 dark:text-theme-400 flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-sm">
+                <i class="fa-solid ${u.icon}"></i>
+              </div>
+              <div>
+                <h3 class="font-extrabold text-slate-800 dark:text-slate-100 text-xs leading-snug">${u.name}</h3>
+                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500">全${count}問</span>
+              </div>
+            </div>
+            <span id="unit-wrong-badge-${unitId}" class="hidden text-[10px] bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-extrabold px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-900 shadow-sm">
+              要復習 0
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-0.5">
+            <button onclick="startQuiz(${unitId}, false)" class="bg-theme-50 hover:bg-theme-100 dark:bg-theme-950/50 dark:hover:bg-theme-900/80 text-theme-700 dark:text-theme-300 font-extrabold text-xs py-2 px-2.5 rounded-xl border border-theme-200/80 dark:border-theme-800/80 transition-all active:scale-95 shadow-sm">
+              スタート
+            </button>
+            <button id="btn-unit-review-${unitId}" onclick="startQuiz(${unitId}, true)" class="bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/80 text-rose-700 dark:text-rose-300 font-extrabold text-xs py-2 px-2.5 rounded-xl border border-rose-200/80 dark:border-rose-800/80 transition-all active:scale-95 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100">
+              復習
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // バッジと件数表示の更新
+    function updateWrongCountBadges() {
+      const wrongPdfIds = Object.keys(wrongQuestionsMap).filter(id => wrongQuestionsMap[id]);
+      const totalWrong = wrongPdfIds.length;
+
+      const btnReviewAll = document.getElementById('btn-review-all');
+      document.getElementById('total-wrong-count').textContent = totalWrong;
+      btnReviewAll.disabled = totalWrong === 0;
+
+      const btnClear = document.getElementById('btn-clear-wrong');
+      if (totalWrong > 0) {
+        btnClear.classList.remove('hidden');
+      } else {
+        btnClear.classList.add('hidden');
+      }
+
+      Object.keys(UNITS_INFO).forEach(unitId => {
+        const unitQuestions = ALL_QUESTIONS.filter(q => q.unit == unitId);
+        const unitWrongCount = unitQuestions.filter(q => wrongQuestionsMap[q.pdfId]).length;
+
+        const badge = document.getElementById(`unit-wrong-badge-${unitId}`);
+        const btnReview = document.getElementById(`btn-unit-review-${unitId}`);
+
+        if (badge && btnReview) {
+          if (unitWrongCount > 0) {
+            badge.textContent = `要復習 ${unitWrongCount}`;
+            badge.classList.remove('hidden');
+            btnReview.disabled = false;
+          } else {
+            badge.classList.add('hidden');
+            btnReview.disabled = true;
+          }
+        }
+      });
+    }
+
+    // クイズ開始処理
+    function startQuiz(unitId, reviewOnly = false) {
+      selectedUnitId = unitId;
+      isReviewMode = reviewOnly;
+      isTestMode = document.getElementById('test-mode-toggle').checked;
+
+      let baseList = [];
+      if (unitId === 'all') {
+        baseList = [...ALL_QUESTIONS];
+      } else {
+        baseList = ALL_QUESTIONS.filter(q => q.unit == unitId);
+      }
+
+      if (reviewOnly) {
+        baseList = baseList.filter(q => wrongQuestionsMap[q.pdfId]);
+        if (baseList.length === 0) {
+          alert('復習対象の問題はありません。');
+          return;
+        }
+      }
+
+      const shuffleQuestions = document.getElementById('shuffle-questions-toggle').checked;
+      currentQuizList = JSON.parse(JSON.stringify(baseList));
+
+      if (shuffleQuestions) {
+        for (let i = currentQuizList.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [currentQuizList[i], currentQuizList[j]] = [currentQuizList[j], currentQuizList[i]];
+        }
+      }
+
+      currentQuestionIndex = 0;
+      sessionScore = 0;
+      sessionWrongQuestions = [];
+      userAnswers = new Array(currentQuizList.length).fill(null);
+
+      document.getElementById('screen-home').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-quiz').classList.remove('hidden');
+
+      const unitBadge = document.getElementById('quiz-unit-badge');
+      if (unitId === 'all') {
+        unitBadge.textContent = "全単元";
+      } else {
+        unitBadge.textContent = UNITS_INFO[unitId].name;
+      }
+
+      const modeBadge = document.getElementById('quiz-mode-badge');
+      if (reviewOnly) {
+        modeBadge.textContent = "誤答復習";
+        modeBadge.className = "bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-bold text-xs px-2.5 py-1 rounded-full border border-rose-200 dark:border-rose-900";
+      } else if (isTestMode) {
+        modeBadge.textContent = "テストモード (一括採点)";
+        modeBadge.className = "bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-xs px-2.5 py-1 rounded-full border border-purple-200 dark:border-purple-900";
+      } else {
+        modeBadge.textContent = "通常モード";
+        modeBadge.className = "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700";
+      }
+
+      document.getElementById('total-q-num').textContent = currentQuizList.length;
+      renderQuestion();
+    }
+
+    // 問題の描画
+    function renderQuestion() {
+      isAnswered = false;
+      const q = currentQuizList[currentQuestionIndex];
+
+      const totalNum = currentQuizList.length;
+      const currentNum = currentQuestionIndex + 1;
+      const progressPercent = Math.round(((currentQuestionIndex) / totalNum) * 100);
+
+      document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+      document.getElementById('quiz-progress-text').textContent = `${progressPercent}% (${currentQuestionIndex}/${totalNum})`;
+
+      document.getElementById('current-q-num').textContent = currentNum;
+      document.getElementById('pdf-question-id').textContent = `PDF原本 ${q.pdfId}`;
+      document.getElementById('question-text').textContent = q.q;
+
+      const reviewTag = document.getElementById('review-tag');
+      if (wrongQuestionsMap[q.pdfId]) {
+        reviewTag.classList.remove('hidden');
+      } else {
+        reviewTag.classList.add('hidden');
+      }
+
+      document.getElementById('feedback-area').className = "hidden p-4 rounded-xl text-center space-y-1";
+      document.getElementById('next-button-area').classList.add('hidden');
+
+      const shuffleOptions = document.getElementById('shuffle-options-toggle').checked;
+      let options = [...q.options];
+
+      if (shuffleOptions) {
+        for (let i = options.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [options[i], options[j]] = [options[j], options[i]];
+        }
+      }
+
+      const labels = ["1", "2", "3", "4"];
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+
+      options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-4 md:p-4.5 rounded-2xl border-2 border-slate-200/90 dark:border-slate-800 hover:border-theme-500 dark:hover:border-theme-400 hover:bg-theme-50/40 dark:hover:bg-theme-950/30 transition-all duration-150 font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between group shadow-sm active:scale-[0.995]";
+        btn.innerHTML = `
+          <div class="flex items-center space-x-3.5">
+            <span class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 group-hover:bg-theme-500 group-hover:text-white flex items-center justify-center text-sm font-black transition-colors flex-shrink-0 shadow-inner">
+              ${labels[idx]}
+            </span>
+            <span class="text-base leading-snug">${opt}</span>
+          </div>
+          <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
+            <span class="text-[10px] font-mono font-semibold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800/90 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700">[キー ${labels[idx]}]</span>
+            <i class="fa-solid fa-circle-check opacity-0 group-hover:opacity-100 text-theme-500 dark:text-theme-400 transition-opacity text-lg ml-0.5"></i>
+          </div>
+        `;
+        btn.onclick = () => checkAnswer(opt, q.answer, btn);
+        container.appendChild(btn);
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 解答判定処理
+    function checkAnswer(selected, correct, clickedBtn) {
+      if (isAnswered) return;
+      isAnswered = true;
+
+      const q = currentQuizList[currentQuestionIndex];
+      userAnswers[currentQuestionIndex] = selected;
+
+      const feedbackArea = document.getElementById('feedback-area');
+      const feedbackResult = document.getElementById('feedback-result');
+      const feedbackMessage = document.getElementById('feedback-message');
+      const feedbackDetail = document.getElementById('feedback-detail');
+
+      const container = document.getElementById('options-container');
+      const buttons = container.querySelectorAll('button');
+
+      if (isTestMode) {
+        buttons.forEach(btn => {
+          btn.disabled = true;
+          btn.classList.remove('hover:border-theme-500', 'hover:bg-theme-50/40');
+          const textSpan = btn.querySelector('span:nth-child(2)');
+          if (textSpan && textSpan.textContent === selected) {
+            btn.classList.add('border-theme-500', 'bg-theme-100/90', 'dark:bg-theme-950/90', 'dark:border-theme-500', 'ring-2', 'ring-theme-300', 'dark:ring-theme-800');
+          }
+        });
+
+        const totalNum = currentQuizList.length;
+        const currentNum = currentQuestionIndex + 1;
+        const progressPercent = Math.round((currentNum / totalNum) * 100);
+        document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+        document.getElementById('quiz-progress-text').textContent = `${progressPercent}% (${currentNum}/${totalNum})`;
+
+        document.getElementById('next-button-area').classList.remove('hidden');
+        return;
+      }
+
+      feedbackArea.classList.remove('hidden');
+
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.classList.remove('hover:border-theme-500', 'hover:bg-theme-50/40');
+        const textSpan = btn.querySelector('span:nth-child(2)');
+        if (textSpan && textSpan.textContent === correct) {
+          btn.classList.add('border-emerald-500', 'bg-emerald-50/90', 'dark:bg-emerald-950/80', 'dark:border-emerald-500', 'ring-2', 'ring-emerald-300', 'dark:ring-emerald-900');
+        } else if (textSpan && textSpan.textContent === selected && selected !== correct) {
+          btn.classList.add('border-rose-500', 'bg-rose-50/90', 'dark:bg-rose-950/80', 'dark:border-rose-500', 'ring-2', 'ring-rose-300', 'dark:ring-rose-900');
+        }
+      });
+
+      const totalNum = currentQuizList.length;
+      const currentNum = currentQuestionIndex + 1;
+      const progressPercent = Math.round((currentNum / totalNum) * 100);
+      document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+      document.getElementById('quiz-progress-text').textContent = `${progressPercent}% (${currentNum}/${totalNum})`;
+
+      const isCorrect = (selected === correct);
+
+      if (isCorrect) {
+        playSound(true);
+        sessionScore++;
+        delete wrongQuestionsMap[q.pdfId];
+        
+        const randomPraise = getPraiseMessage();
+        feedbackArea.className = "p-4 md:p-5 rounded-2xl text-center space-y-1.5 transition-all shadow-md bg-theme-100 dark:bg-theme-950/80 text-theme-800 dark:text-theme-200 border border-theme-300 dark:border-theme-800";
+        feedbackResult.textContent = "⭕ 正解！";
+        feedbackMessage.textContent = randomPraise;
+        feedbackDetail.textContent = `正解は「${correct}」です。`;
+      } else {
+        playSound(false);
+        wrongQuestionsMap[q.pdfId] = true;
+        sessionWrongQuestions.push(q);
+        
+        const randomEncourage = getEncourageMessage();
+        feedbackArea.className = "p-4 md:p-5 rounded-2xl text-center space-y-1.5 transition-all shadow-md bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-200 border border-rose-300 dark:border-rose-800";
+        feedbackResult.textContent = "❌ 不正解...";
+        feedbackMessage.textContent = randomEncourage;
+        feedbackDetail.textContent = `正解は「${correct}」でした。`;
+      }
+
+      saveWrongHistory();
+      document.getElementById('next-button-area').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < currentQuizList.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('screen-quiz').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const total = currentQuizList.length;
+
+      if (isTestMode) {
+        sessionScore = 0;
+        sessionWrongQuestions = [];
+        currentQuizList.forEach((q, idx) => {
+          const uAns = userAnswers[idx];
+          if (uAns === q.answer) {
+            sessionScore++;
+            delete wrongQuestionsMap[q.pdfId];
+          } else {
+            wrongQuestionsMap[q.pdfId] = true;
+            sessionWrongQuestions.push(q);
+          }
+        });
+        saveWrongHistory();
+      }
+
+      document.getElementById('result-score').textContent = sessionScore;
+      document.getElementById('result-total').textContent = total;
+
+      const pct = Math.round((sessionScore / total) * 100);
+      document.getElementById('result-percentage').textContent = `正解率 ${pct}%`;
+
+      const msg = document.getElementById('result-message');
+      if (pct === 100) {
+        msg.textContent = "素晴らしい！全問正解です！完璧な理解度です！";
+      } else if (pct >= 80) {
+        msg.textContent = "お見事！高得点です！あと一歩で全問正解！";
+      } else if (pct >= 50) {
+        msg.textContent = "ナイスファイト！間違えた問題を復習してさらに伸ばしましょう！";
+      } else {
+        msg.textContent = "繰り返し練習して確実に知識を定着させていきましょう！";
+      }
+
+      const wrongSection = document.getElementById('session-wrong-section');
+      const wrongList = document.getElementById('session-wrong-list');
+      const detailTitle = document.getElementById('result-detail-title');
+      wrongList.innerHTML = '';
+
+      if (isTestMode) {
+        wrongSection.classList.remove('hidden');
+        detailTitle.className = "font-bold text-slate-800 dark:text-slate-100 flex items-center text-base";
+        detailTitle.innerHTML = `<i class="fa-solid fa-list-check mr-2 text-theme-600 dark:text-theme-400"></i> 全問題の解答採点結果 (${sessionScore} / ${total} 正解)`;
+
+        currentQuizList.forEach((q, idx) => {
+          const uAns = userAnswers[idx] || '未回答';
+          const isCorrect = (uAns === q.answer);
+          const item = document.createElement('div');
+          item.className = `p-4 rounded-xl border text-left space-y-2 shadow-sm ${
+            isCorrect 
+              ? 'bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/60' 
+              : 'bg-rose-50/60 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900/60'
+          }`;
+          item.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-xs text-slate-400 dark:text-slate-500">問${idx + 1} (${q.pdfId}) - ${UNITS_INFO[q.unit]?.name || ''}</span>
+              <span class="font-black text-xs px-2.5 py-1 rounded-full border shadow-sm ${
+                isCorrect 
+                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800' 
+                  : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border-rose-300 dark:border-rose-800'
+              }">
+                ${isCorrect ? '⭕ 正解' : '❌ 不正解'}
+              </span>
+            </div>
+            <div class="text-slate-800 dark:text-slate-100 font-extrabold text-sm leading-relaxed">${q.q}</div>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs font-bold pt-1 border-t border-slate-200/50 dark:border-slate-800/60">
+              <span class="${isCorrect ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+                あなたの回答: ${uAns}
+              </span>
+              ${!isCorrect ? `<span class="text-emerald-700 dark:text-emerald-400"><i class="fa-solid fa-check mr-1"></i>正解: ${q.answer}</span>` : ''}
+            </div>
+          `;
+          wrongList.appendChild(item);
+        });
+      } else {
+        detailTitle.className = "font-extrabold text-rose-600 dark:text-rose-400 flex items-center";
+        detailTitle.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> 今回間違えた問題`;
+
+        if (sessionWrongQuestions.length > 0) {
+          wrongSection.classList.remove('hidden');
+          sessionWrongQuestions.forEach(q => {
+            const item = document.createElement('div');
+            item.className = "p-4 bg-rose-50/70 dark:bg-rose-950/40 rounded-xl border border-rose-200 dark:border-rose-900 text-left space-y-1.5 shadow-sm";
+            item.innerHTML = `
+              <div class="font-extrabold text-rose-800 dark:text-rose-300 text-xs">${q.pdfId} - ${UNITS_INFO[q.unit]?.name || ''}</div>
+              <div class="text-slate-800 dark:text-slate-100 font-extrabold">${q.q}</div>
+              <div class="text-xs text-emerald-700 dark:text-emerald-400 font-bold pt-1 border-t border-rose-200/50 dark:border-rose-900/50"><i class="fa-solid fa-check mr-1"></i>正解: ${q.answer}</div>
+            `;
+            wrongList.appendChild(item);
+          });
+        } else {
+          wrongSection.classList.add('hidden');
+        }
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function retryCurrentQuiz() {
+      startQuiz(selectedUnitId, isReviewMode);
+    }
+
+    function showHomeScreen() {
+      document.getElementById('screen-quiz').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-home').classList.remove('hidden');
+      updateWrongCountBadges();
+      renderQuestionsList();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filterQuestionsList() {
+      const unitVal = document.getElementById('list-unit-filter').value;
+      const searchVal = document.getElementById('list-search-input').value.trim().toLowerCase();
+
+      let filtered = ALL_QUESTIONS.filter(q => {
+        const matchUnit = (unitVal === 'all' || q.unit == unitVal);
+        const matchSearch = (!searchVal || q.q.toLowerCase().includes(searchVal) || q.answer.toLowerCase().includes(searchVal) || q.pdfId.toLowerCase().includes(searchVal));
+        return matchUnit && matchSearch;
+      });
+
+      renderQuestionsList(filtered);
+    }
+
+    function renderQuestionsList(filteredList = ALL_QUESTIONS) {
+      const tbody = document.getElementById('all-questions-tbody');
+      tbody.innerHTML = '';
+
+      const isHideAnswers = document.getElementById('hide-answer-toggle').checked;
+
+      if (filteredList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 dark:text-slate-500">該当する問題が見つかりません。</td></tr>`;
+        return;
+      }
+
+      filteredList.forEach(q => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors";
+
+        const optionsText = q.options.map((opt, i) => {
+          const label = ["1", "2", "3", "4"][i] || (i+1);
+          return `<span class="inline-block mr-2"><b class="text-theme-700 dark:text-theme-400">${label}:</b> ${opt}</span>`;
+        }).join(' ');
+
+        const maskedClass = isHideAnswers ? "answer-masked" : "";
+
+        tr.innerHTML = `
+          <td class="p-3 text-center font-bold text-slate-400 dark:text-slate-500 whitespace-nowrap">${q.pdfId}</td>
+          <td class="p-3 font-bold text-slate-600 dark:text-slate-300 text-[11px]">${UNITS_INFO[q.unit]?.name || ''}</td>
+          <td class="p-3 font-bold text-slate-800 dark:text-slate-200">${q.q}</td>
+          <td class="p-3 text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">${optionsText}</td>
+          <td class="p-3 font-extrabold whitespace-nowrap">
+            <span class="${maskedClass}" onclick="toggleMaskReveal(this)">${q.answer}</span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleMaskReveal(element) {
+      if (element.classList.contains('answer-masked')) {
+        element.classList.toggle('revealed');
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const quizScreen = document.getElementById('screen-quiz');
+      if (quizScreen.classList.contains('hidden')) return;
+
+      const nextBtnArea = document.getElementById('next-button-area');
+      
+      if (!nextBtnArea.classList.contains('hidden')) {
+        if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter') {
+          e.preventDefault();
+          nextQuestion();
+          return;
+        }
+      }
+
+      if (!isAnswered) {
+        const key = e.key;
+        const code = e.code;
+        const options = document.querySelectorAll('#options-container button');
+        let targetIdx = -1;
+        
+        if (key === '1' || code === 'Numpad1') targetIdx = 0;
+        if (key === '2' || code === 'Numpad2') targetIdx = 1;
+        if (key === '3' || code === 'Numpad3') targetIdx = 2;
+        if (key === '4' || code === 'Numpad4') targetIdx = 3;
+
+        if (targetIdx >= 0 && targetIdx < options.length) {
+          e.preventDefault();
+          options[targetIdx].click();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
